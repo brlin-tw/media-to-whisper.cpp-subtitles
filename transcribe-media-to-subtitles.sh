@@ -6,7 +6,7 @@
 
 GGML_MODEL="${GGML_MODEL:-ggml-medium.bin}"
 TRANSCRIBE_THREADS="${TRANSCRIBE_THREADS:-auto}"
-TRANSCRIBE_THREADS_MINUS_OFFSET="${TRANSCRIBE_THREADS_MINUS_OFFSET:-1}"
+TRANSCRIBE_THREADS_NEGATIVE_OFFSET="${TRANSCRIBE_THREADS_NEGATIVE_OFFSET:-1}"
 
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
@@ -115,24 +115,28 @@ if ! test -e "${GGML_MODEL}"; then
     exit 1
 fi
 
-printf \
-    'Info: Querying the supported CPU thread count...\n'
-if ! cpu_thread_count="$(nproc)"; then
+if test "${TRANSCRIBE_THREADS}" == auto; then
     printf \
-        'Error: Unable to query the supported CPU thread count.\n' \
-        1>&2
-    exit 2
-fi
-printf \
-    'Info: CPU thread count determined to be "%s".\n' \
-    "${cpu_thread_count}"
+        'Info: Querying the supported CPU thread count...\n'
+    if ! cpu_thread_count="$(nproc)"; then
+        printf \
+            'Error: Unable to query the supported CPU thread count.\n' \
+            1>&2
+        exit 2
+    fi
+    printf \
+        'Info: CPU thread count determined to be "%s".\n' \
+        "${cpu_thread_count}"
 
-printf \
-    'Info: Determining the optimal transcribe thread count...\n'
-transcribe_thread_count="$((cpu_thread_count - TRANSCRIBE_THREADS_MINUS_OFFSET))"
-printf \
-    'Info: Optimal transcribe thread count determined to be "%s".\n' \
-    "${transcribe_thread_count}"
+    printf \
+        'Info: Determining the optimal transcribe thread count...\n'
+    transcribe_thread_count="$((cpu_thread_count - TRANSCRIBE_THREADS_NEGATIVE_OFFSET))"
+    printf \
+        'Info: Optimal transcribe thread count determined to be "%s".\n' \
+        "${transcribe_thread_count}"
+else
+    transcribe_thread_count="${TRANSCRIBE_THREADS}"
+fi
 
 inputs=("${@}")
 failed_inputs=()
@@ -199,7 +203,7 @@ for input in "${inputs[@]}"; do
         "${input_filename}" \
         "${wave_file}"
     whispercpp_main_opts=(
-        --threads 7
+        --threads "${transcribe_thread_count}"
         --print-colors
         --print-progress
         --output-srt
