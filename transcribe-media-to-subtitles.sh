@@ -220,6 +220,33 @@ for input in "${inputs[@]}"; do
         failed_inputs+=("${input}")
         continue
     fi
+
+    output_srt_file="${wave_file}.srt"
+    printf \
+        'Info: Locating the output SRT file "%s"...\n' \
+        "${output_srt_file}"
+    if ! test -e "${output_srt_file}"; then
+        printf \
+            'Error: Unable to locate the output SRT file "%s".\n' \
+            "${output_srt_file}" \
+            1>&2
+        exit 2
+    fi
+
+    printf \
+        'Info: Fixing the output SRT file filename...\n'
+    fixed_output_srt_file="${input_name}.srt"
+    mv_opts=(
+        --verbose
+    )
+    if ! mv "${mv_opts[@]}" \
+        "${output_srt_file}" \
+        "${fixed_output_srt_file}"; then
+        printf \
+            'Error: Unable to fix the output SRT file filename.\n' \
+            1>&2
+        exit 2
+    fi
 done
 
 if test "${#failed_inputs[@]}" -ne 0; then
