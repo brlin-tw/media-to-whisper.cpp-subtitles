@@ -7,6 +7,7 @@
 GGML_MODEL="${GGML_MODEL:-ggml-medium.bin}"
 TRANSCRIBE_THREADS="${TRANSCRIBE_THREADS:-auto}"
 TRANSCRIBE_THREADS_NEGATIVE_OFFSET="${TRANSCRIBE_THREADS_NEGATIVE_OFFSET:-1}"
+WHISPERCPP_MAIN="${WHISPERCPP_MAIN:-whisper-cpp.main}"
 
 printf \
     'Info: Configuring the defensive interpreter behaviors...\n'
@@ -32,7 +33,6 @@ required_commands=(
     ffmpeg
     nproc
     realpath
-    whisper-cpp.main
 )
 flag_required_command_check_failed=false
 for command in "${required_commands[@]}"; do
@@ -47,6 +47,16 @@ done
 if test "${flag_required_command_check_failed}" == true; then
     printf \
         'Error: Required command check failed, please check your installation.\n' \
+        1>&2
+    exit 1
+fi
+
+printf \
+    'Info: Detecting the existence of the main program of Whisper.cpp...\n'
+if ! command -v "${WHISPERCPP_MAIN}" >/dev/null; then
+    printf \
+        'Error: Unable to detect the existence of the main program of Whisper.cpp(%s).\n' \
+        "${WHISPERCPP_MAIN}" \
         1>&2
     exit 1
 fi
@@ -211,7 +221,7 @@ for input in "${inputs[@]}"; do
         --language auto
         --file "${wave_file}"
     )
-    if ! whisper-cpp.main "${whispercpp_main_opts[@]}"; then
+    if ! "${WHISPERCPP_MAIN}" "${whispercpp_main_opts[@]}"; then
         printf \
             'Error: Unable to transcribe the subtitles of the "%s" input file from the "%s" audio track file.\n' \
             "${input_filename}" \

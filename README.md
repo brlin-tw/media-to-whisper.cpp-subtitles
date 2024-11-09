@@ -13,6 +13,8 @@ You need to have the following software installed and it's command available in 
   For determining the absolute path of the utility and the available threads to do the subtitle inference.
 * whisper.cpp  
   For inferencing the subtitles from the media's audio tracks.
+
+  By default it uses [the unofficial snap distribution](https://snapcraft.io/whisper-cpp) of Whisper.cpp.
 * FFmpeg  
   For converting the input media into formats that can be consumed by whisper.cpp.
 
@@ -70,6 +72,19 @@ When [the `TRANSCRIBE_THREADS` environment variable](#transcribe_threads) is set
 **Default value:**
 
 `1` (Deduct one from the detected available thread count, on a 8 total CPU thread system the optimal transcribe thread count will be determined to be `7`)
+
+### WHISPERCPP_MAIN
+
+Specify the base command of the Whisper.cpp main program.  This environment variable allows users to use a different Whisper.cpp distribution other than the snap.
+
+**Supported values:**
+
+* The path of a valid Whisper.cpp main program.
+* The base command of a valid Whisper.cpp main program, if it is in the command search PATHs.
+
+**Default value:** `whisper-cpp-main`
+
+Use [the unofficial snap distribution](https://snapcraft.io/whisper-cpp)'s main app command.
 
 ## Licensing
 
