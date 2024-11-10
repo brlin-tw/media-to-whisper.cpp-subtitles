@@ -9,7 +9,7 @@ Converting user-specified media files to subtitles using the Whisper.cpp utility
 
 You need to have the following software installed and it's command available in the command search PATHs:
 
-* GNU Core Utilities  
+* GNU core utilities  
   For determining the absolute path of the utility and the available threads to do the subtitle inference.
 * whisper.cpp  
   For inferencing the subtitles from the media's audio tracks.
