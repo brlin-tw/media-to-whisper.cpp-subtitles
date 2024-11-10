@@ -9,13 +9,13 @@ Converting user-specified media files to subtitles using the Whisper.cpp utility
 
 You need to have the following software installed and it's command available in the command search PATHs:
 
-* GNU core utilities  
+* [GNU core utilities](https://www.gnu.org/software/coreutils/)  
   For determining the absolute path of the utility and the available threads to do the subtitle inference.
-* whisper.cpp  
+* [whisper.cpp](https://github.com/ggerganov/whisper.cpp)  
   For inferencing the subtitles from the media's audio tracks.
 
   By default it uses [the unofficial snap distribution](https://snapcraft.io/whisper-cpp) of Whisper.cpp.
-* FFmpeg  
+* [FFmpeg](https://www.ffmpeg.org/)  
   For converting the input media into formats that can be consumed by whisper.cpp.
 
 ## Usage
